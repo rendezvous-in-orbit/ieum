@@ -23,7 +23,6 @@
   @keyframes r { to { transform: rotate(360deg); } }
   a.btn { display: none; margin: 4px 0 12px; padding: 13px 16px; background: #fff; color: var(--navy);
           border-radius: 10px; text-decoration: none; font-weight: 700; text-align: center; }
-  small { display: block; margin-top: 10px; font-size: 12.5px; line-height: 1.55; opacity: .8; }
 </style>
 </head>
 <body>
@@ -32,11 +31,11 @@
   <h1>이음<br>인천공항 UAM 셔틀 예약</h1>
   <p id="msg"><span class="spin"></span>현장 시연 화면에 연결하는 중이에요</p>
   <a id="go" class="btn" href="#">시연 화면 열기</a>
-  <small>“잠실에서 KE081 타요” 한 줄이면 탈 편을 찾아 줘요. 비행금지구역이 생기면 항로와 예약을 다시 짜요.</small>
 </main>
 <script>
 /* 고정 주소의 안내 페이지 : live.json (포인터) 이 가리키는 그날의 시연 주소로 넘긴다.
-   포인터는 app_pax/relay.py 가 고쳐 올린다 (터널 https 주소 또는 같은 와이파이 http 주소). */
+   포인터는 app_pax/relay.py 가 고쳐 올린다 (터널 https 주소 또는 같은 와이파이 http 주소).
+   포인터가 오늘 (한국 날짜) 것이 아니고 서버도 응답하지 않으면, 지난 시연을 끄지 못한 포인터로 보고 '시연 시간이 아님' 을 보인다. */
 (function () {
   var msg = document.getElementById("msg"), go = document.getElementById("go");
   function off(text) {
@@ -61,9 +60,12 @@
     .then(function (r) { return r.json(); })
     .then(function (live) {
       if (!live || live.status !== "live" || !live.url) { return off(); }
-      if (/^http:\/\//.test(live.url)) { return open(live.url); }   /* 같은 와이파이 직접 : https 페이지에서는 확인 없이 이동 */
+      var today = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);   /* 한국 날짜 */
+      var stale = String(live.updated_kst || "").slice(0, 10) !== today;
+      if (/^http:\/\//.test(live.url)) { return stale ? off() : open(live.url); }   /* 같은 와이파이 직접 : https 페이지에서는 확인 없이 이동 */
       return probe(live.url, 6000).then(function (ok) {
         if (ok) { return open(live.url); }
+        if (stale) { return off(); }
         off("시연 서버가 잠시 응답하지 않아요.<br>잠시 뒤 다시 QR을 찍어 주세요.");
       });
     })
