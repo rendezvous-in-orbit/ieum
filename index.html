@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>이음 · 인천공항 UAM 셔틀 예약</title>
+<style>
+  :root { --bg: #5281B9; --navy: #27466F; --hi: #FFD66B; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: #fff;
+    font-family: "NanumSquare", "나눔스퀘어", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+  main { width: min(92vw, 420px); padding: 28px 22px; border: 1px solid rgba(255, 255, 255, .45); border-radius: 16px; }
+  .team { margin: 0 0 8px; font-size: 13px; opacity: .85; }
+  h1 { margin: 0 0 16px; font-size: 23px; line-height: 1.35; }
+  p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; }
+  .hi { color: var(--hi); font-weight: 700; }
+  .spin { display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px;
+          border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: r 1s linear infinite; }
+  @keyframes r { to { transform: rotate(360deg); } }
+  a.btn { display: none; margin: 4px 0 12px; padding: 13px 16px; background: #fff; color: var(--navy);
+          border-radius: 10px; text-decoration: none; font-weight: 700; text-align: center; }
+  small { display: block; margin-top: 10px; font-size: 12.5px; line-height: 1.55; opacity: .8; }
+</style>
+</head>
+<body>
+<main>
+  <p class="team">2026 전국 대학생 UAM 올림피아드 · 공항활용부문 · 팀 이음</p>
+  <h1>이음<br>인천공항 UAM 셔틀 예약</h1>
+  <p id="msg"><span class="spin"></span>현장 시연 화면에 연결하는 중이에요</p>
+  <a id="go" class="btn" href="#">시연 화면 열기</a>
+  <small>“잠실에서 KE081 타요” 한 줄이면 탈 편을 찾아 줘요. 비행금지구역이 생기면 항로와 예약을 다시 짜요.</small>
+</main>
+<script>
+/* 고정 주소의 안내 페이지 : live.json (포인터) 이 가리키는 그날의 시연 주소로 넘긴다.
+   포인터는 app_pax/relay.py 가 고쳐 올린다 (터널 https 주소 또는 같은 와이파이 http 주소). */
+(function () {
+  var msg = document.getElementById("msg"), go = document.getElementById("go");
+  function off(text) {
+    msg.innerHTML = text || '지금은 현장 시연 시간이 아니에요.<br><span class="hi">전시존에서 시연 중일 때</span> 다시 QR을 찍어 주세요.';
+  }
+  function open(url) {
+    go.href = url;
+    go.style.display = "block";
+    location.replace(url);
+  }
+  function probe(url, ms) {
+    return new Promise(function (resolve) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; resolve(false); } }, ms);
+      fetch(url.replace(/\/$/, "") + "/api/ping", { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { if (!done) { done = true; clearTimeout(t); resolve(!!(j && j.ok)); } })
+        .catch(function () { if (!done) { done = true; clearTimeout(t); resolve(false); } });
+    });
+  }
+  fetch("live.json?t=" + Date.now(), { cache: "no-store" })
+    .then(function (r) { return r.json(); })
+    .then(function (live) {
+      if (!live || live.status !== "live" || !live.url) { return off(); }
+      if (/^http:\/\//.test(live.url)) { return open(live.url); }   /* 같은 와이파이 직접 : https 페이지에서는 확인 없이 이동 */
+      return probe(live.url, 6000).then(function (ok) {
+        if (ok) { return open(live.url); }
+        off("시연 서버가 잠시 응답하지 않아요.<br>잠시 뒤 다시 QR을 찍어 주세요.");
+      });
+    })
+    .catch(function () { off(); });
+})();
+</script>
+</body>
+</html>
