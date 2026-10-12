@@ -1,7 +1,7 @@
 {
- "status": "live",
- "url": "https://angel-endorsed-rapid-workers.trycloudflare.com/",
- "mode": "tunnel",
+ "status": "off",
+ "url": null,
+ "mode": null,
  "updated_kst": "2026-10-12 17:44",
  "fixed": "https://rendezvous-in-orbit.github.io/ieum/"
 }
