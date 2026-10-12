@@ -1,7 +1,7 @@
 {
- "status": "live",
- "url": "https://minute-suggestions-compound-nirvana.trycloudflare.com/",
- "mode": "tunnel",
- "updated_kst": "2026-10-12 16:54",
+ "status": "off",
+ "url": null,
+ "mode": null,
+ "updated_kst": "2026-10-12 16:59",
  "fixed": "https://rendezvous-in-orbit.github.io/ieum/"
 }
