@@ -1,7 +1,7 @@
 {
- "status": "live",
- "url": "https://exempt-reno-travelers-skills.trycloudflare.com/",
- "mode": "tunnel",
- "updated_kst": "2026-11-05 09:20",
+ "status": "off",
+ "url": null,
+ "mode": null,
+ "updated_kst": "2026-11-05 09:39",
  "fixed": "https://rendezvous-in-orbit.github.io/ieum/"
 }
