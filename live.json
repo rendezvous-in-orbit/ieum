@@ -1,7 +1,7 @@
 {
- "status": "off",
- "url": null,
- "mode": null,
- "updated_kst": "2026-11-05 12:48",
+ "status": "live",
+ "url": "https://mechanics-contributing-thermal-diamonds.trycloudflare.com/",
+ "mode": "tunnel",
+ "updated_kst": "2026-11-05 12:51",
  "fixed": "https://rendezvous-in-orbit.github.io/ieum/"
 }
