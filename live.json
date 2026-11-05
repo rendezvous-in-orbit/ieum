@@ -1,7 +1,7 @@
 {
- "status": "off",
- "url": null,
- "mode": null,
- "updated_kst": "2026-11-05 09:39",
+ "status": "live",
+ "url": "https://licenses-liz-karl-ipaq.trycloudflare.com/",
+ "mode": "tunnel",
+ "updated_kst": "2026-11-05 09:41",
  "fixed": "https://rendezvous-in-orbit.github.io/ieum/"
 }
